@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Telemedicine Platform - Doctor Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+    #login-section, #dashboard {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .hidden {
+      display: none;
+    }
+    .patient {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .patient:last-child {
+      border-bottom: none;
+    }
+    button {
+      cursor: pointer;
+      padding: 5px 10px;
+      margin-left: 10px;
+    }
+    video {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+    label {
+      font-weight: bold;
+    }
+    select, input {
+      padding: 5px;
+      margin-top: 5px;
+    }
+    #grade-message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div id="login-section">
+    <h2>Doctor Login</h2>
+    <form id="login-form">
+      <label for="username">Username:</label><br>
+      <input type="text" id="username" required><br><br>
+      <label for="password">Password:</label><br>
+      <input type="password" id="password" required><br><br>
+      <button type="submit">Login</button>
+    </form>
+    <div id="login-error" style="color: red; margin-top: 10px;"></div>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div id="dashboard" class="hidden">
+    <h2>Doctor Dashboard</h2>
+    <div id="patient-list"></div>
+    <hr>
+    <div id="video-review-section" class="hidden">
+      <h3>Review Video for <span id="patient-name"></span></h3>
+      <video id="exam-video" controls>
+        <source src="" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <br><br>
+      <label for="grade">Grade:</label>
+      <select id="grade">
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="F">F</option>
+      </select>
+      <button id="submit-grade">Submit Grade</button>
+      <div id="grade-message" style="color: green;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Dummy credentials for demonstration purposes.
+    const dummyUsername = "doctor";
+    const dummyPassword = "password123";
+
+    // Listen for login form submission.
+    document.getElementById("login-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      const usernameInput = document.getElementById("username").value;
+      const passwordInput = document.getElementById("password").value;
+      
+      if(usernameInput === dummyUsername && passwordInput === dummyPassword) {
+        // Hide the login section and show the dashboard.
+        document.getElementById("login-section").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        loadPatients();
+      } else {
+        document.getElementById("login-error").textContent = "Invalid username or password.";
+      }
+    });
+
+    // Dummy patient data with exam video URLs.
+    const patients = [
+      { id: 1, name: "John Doe", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" },
+      { id: 2, name: "Jane Smith", videoUrl: "https://www.w3schools.com/html/movie.mp4" }
+    ];
+
+    // Populate the patient list.
+    function loadPatients() {
+      const patientListDiv = document.getElementById("patient-list");
+      patientListDiv.innerHTML = "<h3>Patients Exam Videos</h3>";
+      patients.forEach(patient => {
+        const patientDiv = document.createElement("div");
+        patientDiv.classList.add("patient");
+        patientDiv.innerHTML = `
+          <strong>${patient.name}</strong>
+          <button onclick="reviewVideo(${patient.id})">Review Video</button>
+        `;
+        patientListDiv.appendChild(patientDiv);
+      });
+    }
+
+    // Function to load and review a specific patient's video.
+    function reviewVideo(patientId) {
+      const patient = patients.find(p => p.id === patientId);
+      if (patient) {
+        document.getElementById("patient-name").textContent = patient.name;
+        document.getElementById("exam-video").src = patient.videoUrl;
+        document.getElementById("video-review-section").classList.remove("hidden");
+        document.getElementById("grade-message").textContent = "";
+      }
+    }
+
+    // Handle grade submission.
+    document.getElementById("submit-grade").addEventListener("click", function() {
+      const grade = document.getElementById("grade").value;
+      // In a real application, you'd send this grade to the server.
+      document.getElementById("grade-message").textContent = "Grade submitted: " + grade;
+      // Optionally, you can hide the review section or update the patient list after submission.
+    });
+  </script>
+</body>
+</html>
